@@ -196,8 +196,8 @@ All five share the same embedder (`all-MiniLM-L6-v2`, 384 dims, CPU-friendly).
 ### 1. Install
 
 ```bash
-git clone https://github.com/YOUR-HANDLE/listening-archive
-cd listening-archive
+git clone https://github.com/LaFlameX07/Listening-Archive
+cd Listening-Archive
 make install
 ```
 
@@ -275,22 +275,22 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac) o
 ```json
 {
   "mcpServers": {
-    "listening-archive": {
+    "Listening-Archive": {
       "command": "uv",
-      "args": ["run", "--directory", "/absolute/path/to/listening-archive", "python", "-m", "backend.mcp_server"]
+      "args": ["run", "--directory", "/absolute/path/to/Listening-Archive", "python", "-m", "backend.mcp_server"]
     }
   }
 }
 ```
 
-Restart Claude Desktop. Ask: *"Use listening-archive tools. Search my memory for late-night sessions in February."*
+Restart Claude Desktop. Ask: *"Use Listening-Archive tools. Search my memory for late-night sessions in February."*
 
 ---
 
 ## Project layout
 
 ```
-listening-archive/
+Listening-Archive/
 ├── README.md
 ├── Makefile                  ← install / demo / run / ingest / mcp
 ├── pyproject.toml            ← pinned for Intel Mac, Linux, Windows
