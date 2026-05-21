@@ -1,0 +1,32 @@
+# Secrets
+.env
+*.env.local
+
+# Local data
+data/archive.db
+data/chroma/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.uv/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Models cache
+.cache/
+*.bin
+
+# Distribution
+dist/
+build/
+*.egg-info/

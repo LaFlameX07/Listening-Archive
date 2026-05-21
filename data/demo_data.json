@@ -1,0 +1,72 @@
+{
+  "subject": "00471-A",
+  "compiled": "2026-05-21",
+  "top_artists": [
+    {"id": "mit01", "name": "Mitski", "plays": 412, "genres": ["indie rock", "art pop", "alt-folk"]},
+    {"id": "pb02", "name": "Phoebe Bridgers", "plays": 198, "genres": ["indie folk", "indie rock"]},
+    {"id": "bt03", "name": "Big Thief", "plays": 156, "genres": ["indie folk", "contemporary folk"]},
+    {"id": "al04", "name": "Adrianne Lenker", "plays": 142, "genres": ["indie folk", "avant-folk"]},
+    {"id": "bi05", "name": "Bon Iver", "plays": 119, "genres": ["indie folk", "ambient"]},
+    {"id": "lo06", "name": "Lorde", "plays": 88, "genres": ["art pop", "indie pop"]},
+    {"id": "ho07", "name": "Hozier", "plays": 74, "genres": ["indie folk", "blues rock"]},
+    {"id": "fk08", "name": "FKA twigs", "plays": 67, "genres": ["art pop", "alternative R&B"]},
+    {"id": "jm09", "name": "Joni Mitchell", "plays": 54, "genres": ["folk", "singer-songwriter"]},
+    {"id": "cl10", "name": "Cyndi Lauper", "plays": 49, "genres": ["pop", "new wave"]}
+  ],
+  "top_tracks": [
+    {"id": "t01", "cat": "A1 · 047", "name": "Bug Like an Angel", "artist": "Mitski", "duration_ms": 194000, "plays": 47},
+    {"id": "t02", "cat": "A2 · 039", "name": "Pink in the Night", "artist": "Mitski", "duration_ms": 208000, "plays": 39},
+    {"id": "t03", "cat": "A3 · 038", "name": "Funeral", "artist": "Phoebe Bridgers", "duration_ms": 271000, "plays": 38},
+    {"id": "t04", "cat": "A4 · 034", "name": "Mythological Beauty", "artist": "Big Thief", "duration_ms": 252000, "plays": 34},
+    {"id": "t05", "cat": "A5 · 031", "name": "Anthonio", "artist": "Adrianne Lenker", "duration_ms": 188000, "plays": 31},
+    {"id": "t06", "cat": "B1 · 029", "name": "Time After Time", "artist": "Cyndi Lauper", "duration_ms": 241000, "plays": 29},
+    {"id": "t07", "cat": "B2 · 027", "name": "Holocene", "artist": "Bon Iver", "duration_ms": 336000, "plays": 27},
+    {"id": "t08", "cat": "B3 · 026", "name": "Stoned at the Nail Salon", "artist": "Lorde", "duration_ms": 262000, "plays": 26},
+    {"id": "t09", "cat": "B4 · 024", "name": "Movement", "artist": "Hozier", "duration_ms": 279000, "plays": 24},
+    {"id": "t10", "cat": "B5 · 023", "name": "Cellophane", "artist": "FKA twigs", "duration_ms": 222000, "plays": 23}
+  ],
+  "stats": {
+    "total_minutes": 38420, "total_plays": 14802, "distinct_artists": 847, "new_discoveries": 247,
+    "lyrics_indexed": 3210, "vectors": 17194
+  },
+  "decades": [
+    {"label": "1970s", "pct": 4}, {"label": "1980s", "pct": 3}, {"label": "1990s", "pct": 8},
+    {"label": "2000s", "pct": 11}, {"label": "2010s", "pct": 31}, {"label": "2020s", "pct": 43}
+  ],
+  "lyrics_corpus": [
+    {"id": "t01", "title": "Bug Like an Angel", "artist": "Mitski",
+     "lyrics": "There's a bug like an angel stuck to the bottom of my glass with a thread of my saliva. It's been swimming in there for the better part of an hour. I'm like, you're an angel, I'm a fool, sometimes a drink feels like family. The bug stares back, motionless, framed by the curve of cheap wine. Outside the window, the night arranges itself around me. Quiet, expanding. A quiet kind of grief."},
+    {"id": "t03", "title": "Funeral", "artist": "Phoebe Bridgers",
+     "lyrics": "I'm singing at a funeral tomorrow for a kid a year older than me. I've been talking to his dad, it makes me so sad. I keep my body hidden, my friends keep me posted on a stranger they once knew. And it makes me feel so old, I'm twenty-five, and afraid of my own shadow, of every face I knew when I was nine."},
+    {"id": "t04", "title": "Mythological Beauty", "artist": "Big Thief",
+     "lyrics": "There's a child outside, called my mom by name. He stood there for a while before he came in. There's a sister in your head, in your head. There's a sister in the riverbed. You have mythological beauty in your gait, in the way you carry weather. Tell me everything before you go. I will hold you like a mother does her child."},
+    {"id": "t05", "title": "Anthonio", "artist": "Adrianne Lenker",
+     "lyrics": "It's a four a.m. and a quiet kind of grief, the kind that you can hold without spilling. I remember your face like the back of my hand, I remember the way that you stood at the corner of the room, half-listening. The window was open. The trees were doing their slow indifferent dance."},
+    {"id": "t07", "title": "Holocene", "artist": "Bon Iver",
+     "lyrics": "Someway, baby, it's part of me, apart from me. You're laying waste to Halloween. You fucked it, friend, it's on its head, it struck the street. You're in Milwaukee, off your feet. And at once I knew I was not magnificent. Strayed above the highway aisle. Jagged vacance, thick with ice. I could see for miles, miles, miles. 3rd and Lake it burnt away, the hallway was where we learned to celebrate."},
+    {"id": "t09", "title": "Movement", "artist": "Hozier",
+     "lyrics": "You are a call to motion, there all of you, a verb in perfect view. Like Atlas, in his prime, with the heavens on your shoulders. When you move, I'm moved. When you move, I could never define all that you are to me."}
+  ],
+  "artist_bios": [
+    {"name": "Mitski", "bio": "Mitski Miyawaki is an American singer-songwriter whose work has been described as emotionally direct, structurally restless, and lyrically confessional. Her 2018 album Be the Cowboy and 2022's Laurel Hell brought her wide critical acclaim. Critics often note her tendency to subvert conventional indie rock structures with abrupt shifts in dynamics and theatrical lyrical framing."},
+    {"name": "Phoebe Bridgers", "bio": "Phoebe Bridgers is an American singer-songwriter associated with the indie folk and confessional indie scenes of the late 2010s. Her 2020 album Punisher was nominated for Best Alternative Music Album at the Grammys. She is also a member of the supergroup boygenius alongside Julien Baker and Lucy Dacus."},
+    {"name": "Big Thief", "bio": "Big Thief is an American indie folk band formed in 2015. Their music has been described as emotionally raw, melodically open, and influenced by folk traditions while resisting easy categorization. The band is fronted by Adrianne Lenker."},
+    {"name": "Adrianne Lenker", "bio": "Adrianne Lenker is an American singer-songwriter and the lead vocalist of Big Thief. Her solo work, including 2020's songs and instrumentals and 2024's Bright Future, is known for its intimate fingerpicking, quiet vocal delivery, and image-rich lyricism."},
+    {"name": "Bon Iver", "bio": "Bon Iver is the project of American singer-songwriter Justin Vernon. Beginning with the 2007 album For Emma, Forever Ago, the project has evolved from acoustic folk to incorporate electronics, autotune, and choral arrangements. Holocene from 2011's self-titled album is one of his most-loved tracks."},
+    {"name": "Joni Mitchell", "bio": "Joni Mitchell is a Canadian-American singer-songwriter widely regarded as one of the most influential songwriters of the 20th century. Her album Blue (1971), featuring 'A Case of You', is frequently cited as one of the greatest albums of all time."}
+  ],
+  "notes": [
+    {"track_id": "t01", "text": "The gospel hum at 1:42 is the whole record. The way the choir comes in feels like permission."},
+    {"track_id": "t07", "text": "Holocene reminds me of the drive home from college in December 2019. Snow on the highway, no traffic."},
+    {"track_id": "t05", "text": "Anthonio — that first line about four a.m. and grief. Played this on repeat the week of grandpa's funeral."},
+    {"track_id": "t03", "text": "I sang this at a friend's memorial. The line about being twenty-five and afraid of your shadow hit different that day."}
+  ],
+  "findings": [
+    {"date": "2026-03-03", "via": "Discover Weekly", "track": "Glow On", "artist": "Turnstile",
+     "note": "A pivot in the year's emotional register — louder, faster, returned to 19 times since first play."},
+    {"date": "2026-02-18", "via": "friend recommendation", "track": "A Light for Attracting Attention", "artist": "The Smile",
+     "note": "Logged at 02:47am. The Thom Yorke project. Played twice through that night."},
+    {"date": "2026-01-29", "via": "radio", "track": "A Strangely Isolated Place", "artist": "Ulrich Schnauss",
+     "note": "First ambient entry of the year. Five plays in the week following discovery."}
+  ]
+}
