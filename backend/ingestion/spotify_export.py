@@ -129,3 +129,17 @@ if __name__ == "__main__":
     parser.add_argument("--min-ms", type=int, default=30_000, help="Skip plays shorter than this (ms). Default 30000.")
     args = parser.parse_args()
     ingest(Path(args.path), min_ms=args.min_ms)
+
+
+def from_zip(zip_path: Path, min_ms: int = 30_000) -> dict:
+    """
+    Extract a Spotify GDPR ZIP into a temp folder and run ingest on it.
+    Called by the /api/ingest/upload endpoint.
+    """
+    import tempfile
+    import zipfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+        extract_dir = Path(tmpdir) / "extracted"
+        with zipfile.ZipFile(zip_path) as z:
+            z.extractall(extract_dir)
+        return ingest(extract_dir, min_ms=min_ms)

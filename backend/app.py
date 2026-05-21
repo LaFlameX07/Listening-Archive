@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -99,21 +99,141 @@ async def auth_callback(code: str, state_param: str = Query(None, alias="state")
         return JSONResponse({"error": str(e)}, status_code=400)
 
 
-# ---------- Wrapped data ----------
+# ---------- Status (does the user have data?) ----------
+
+@app.get("/api/status")
+async def get_status():
+    """Tell the frontend whether the user has connected real data."""
+    plays = state.db.recent_plays(limit=1)
+    has_data = len(plays) > 0
+    all_plays = state.db.recent_plays(limit=1_000_000)
+    return {
+        "has_data": has_data,
+        "demo_mode": state.demo_mode,
+        "plays_count": len(all_plays),
+        "lyrics_indexed": state.lyrics_rag.count(),
+        "notes_count": len(state.db.all_notes()),
+        "genius_configured": bool(settings.GENIUS_TOKEN),
+        "spotify_configured": bool(settings.SPOTIFY_CLIENT_ID),
+    }
+
+
+# ---------- Wrapped data (real or demo) ----------
 
 @app.get("/api/wrapped")
 async def get_wrapped():
-    """Return the full magazine-page data."""
-    if state.demo_mode:
+    """
+    Return magazine-page data.
+    - If the user has real plays in SQLite → compute stats from those.
+    - Else if demo_mode → return pre-baked demo data.
+    - Else (running with empty DB, no demo) → return empty markers.
+    """
+    from collections import Counter
+
+    plays = state.db.recent_plays(limit=100_000)
+
+    # No real data + demo mode → serve pre-baked demo
+    if not plays and state.demo_mode:
         with open(DATA_DIR / "demo_data.json") as f:
-            return json.load(f)
-    top_artists = await state.spotify.get_top_artists(time_range="long_term", limit=10)
-    top_tracks = await state.spotify.get_top_tracks(time_range="long_term", limit=10)
-    recent = await state.spotify.get_recently_played(limit=50)
+            data = json.load(f)
+            data["has_real_data"] = False
+            return data
+
+    # No real data, no demo → empty shell
+    if not plays:
+        return {"has_real_data": False, "top_artists": [], "top_tracks": [], "stats": {}}
+
+    # Real data — compute from SQLite plays
+    artist_counter: Counter = Counter()
+    track_counter: Counter = Counter()
+    total_ms = 0
+
+    for p in plays:
+        artist_counter[p["artist_name"]] += 1
+        track_counter[(p["track_name"], p["artist_name"])] += 1
+        total_ms += p["duration_ms"] or 0
+
+    top_artists = [
+        {"name": name, "plays": count, "genres": []}
+        for name, count in artist_counter.most_common(10)
+    ]
+    top_tracks = [
+        {"name": track, "artist": artist, "plays": count}
+        for (track, artist), count in track_counter.most_common(10)
+    ]
+
     return {
+        "has_real_data": True,
         "top_artists": top_artists,
         "top_tracks": top_tracks,
-        "recent_plays": recent,
+        "stats": {
+            "total_minutes": total_ms // 60_000,
+            "total_plays": len(plays),
+            "distinct_artists": len(artist_counter),
+            "distinct_tracks": len(track_counter),
+            "lyrics_indexed": state.lyrics_rag.count(),
+            "vectors": state.lyrics_rag.count() + state.memory_rag.collection.count(),
+        },
+    }
+
+
+# ---------- File upload — Spotify GDPR export ZIP ----------
+
+@app.post("/api/ingest/upload")
+async def ingest_upload(file: UploadFile = File(...)):
+    """Accept a Spotify GDPR data export ZIP and ingest it."""
+    import tempfile
+    from backend.ingestion.spotify_export import from_zip
+
+    if not file.filename or not file.filename.lower().endswith(".zip"):
+        return JSONResponse({"error": "Must be a .zip file"}, status_code=400)
+
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp:
+            content = await file.read()
+            tmp.write(content)
+            tmp_path = Path(tmp.name)
+        result = from_zip(tmp_path)
+        tmp_path.unlink(missing_ok=True)
+        return {"ok": True, **result}
+    except FileNotFoundError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    except Exception as e:
+        return JSONResponse({"error": f"Ingestion failed: {e}"}, status_code=500)
+
+
+# ---------- Lyrics ingestion — Genius API for top N tracks ----------
+
+@app.post("/api/lyrics/ingest")
+async def ingest_lyrics(limit: int = 30):
+    """Ingest lyrics from Genius for the user's top N most-played tracks."""
+    if not settings.GENIUS_TOKEN:
+        return JSONResponse({"error": "GENIUS_TOKEN not set in .env"}, status_code=400)
+
+    from collections import Counter
+    plays = state.db.recent_plays(limit=100_000)
+    if not plays:
+        return JSONResponse({"error": "No plays found. Upload your Spotify data first."}, status_code=400)
+
+    track_counts: Counter = Counter()
+    for p in plays:
+        track_counts[(p["track_name"], p["artist_name"], p["track_id"])] += 1
+
+    top_n = track_counts.most_common(limit)
+    successes = 0
+    failures: list[str] = []
+    for (track_name, artist_name, track_id), _ in top_n:
+        ok = await state.lyrics_rag.ingest_track_from_genius(track_name, artist_name, track_id)
+        if ok:
+            successes += 1
+        else:
+            failures.append(f"{track_name} — {artist_name}")
+
+    return {
+        "attempted": len(top_n),
+        "ingested": successes,
+        "failed_samples": failures[:5],
+        "total_lyrics_indexed": state.lyrics_rag.count(),
     }
 
 
@@ -235,6 +355,17 @@ def build_tool_definitions() -> list[dict]:
             },
         },
         {
+            "name": "get_top_tracks",
+            "description": "Get the user's top N most-played tracks for a time range (short_term, medium_term, long_term). Use for questions about top songs, most-played tracks, favourite songs.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "time_range": {"type": "string", "enum": ["short_term", "medium_term", "long_term"]},
+                    "limit": {"type": "integer"},
+                },
+            },
+        },
+        {
             "name": "search_notes",
             "description": "Search the user's own annotations about tracks/artists.",
             "parameters": {
@@ -267,6 +398,12 @@ async def handle_tool_call(name: str, args: dict) -> dict:
             with open(DATA_DIR / "demo_data.json") as f:
                 return {"artists": json.load(f).get("top_artists", [])[:limit]}
         return {"artists": await state.spotify.get_top_artists(args.get("time_range", "long_term"), limit)}
+    if name == "get_top_tracks":
+        limit = _int(args.get("limit"), 10)
+        if state.demo_mode:
+            with open(DATA_DIR / "demo_data.json") as f:
+                return {"tracks": json.load(f).get("top_tracks", [])[:limit]}
+        return {"tracks": await state.spotify.get_top_tracks(args.get("time_range", "long_term"), limit)}
     if name == "search_notes":
         return {"results": state.notes_rag.search(args["query"])}
     return {"error": f"unknown tool {name}"}

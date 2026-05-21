@@ -519,7 +519,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -937,7 +937,7 @@ name = "importlib-metadata"
 version = "9.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp" },
+    { name = "zipp", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/01/15bb152d77b21318514a96f43af312635eb2500c96b55398d020c93d86ea/importlib_metadata-9.0.0.tar.gz", hash = "sha256:a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc", size = 56405, upload-time = "2026-03-20T06:42:56.999Z" }
 wheels = [
@@ -1041,11 +1041,14 @@ dependencies = [
     { name = "fastapi" },
     { name = "google-generativeai" },
     { name = "httpx" },
+    { name = "lyricsgenius", version = "3.7.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "lyricsgenius", version = "3.12.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "mcp" },
     { name = "numpy" },
     { name = "onnxruntime" },
     { name = "pydantic" },
     { name = "python-dotenv" },
+    { name = "python-multipart" },
     { name = "sentence-transformers" },
     { name = "torch" },
     { name = "uvicorn", extra = ["standard"] },
@@ -1064,11 +1067,13 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.110" },
     { name = "google-generativeai", specifier = ">=0.7" },
     { name = "httpx", specifier = ">=0.27" },
+    { name = "lyricsgenius", specifier = ">=3.0" },
     { name = "mcp", specifier = ">=0.9" },
     { name = "numpy", specifier = ">=1.24,<2.0" },
     { name = "onnxruntime", specifier = ">=1.17,<1.20" },
     { name = "pydantic", specifier = ">=2.6" },
     { name = "python-dotenv", specifier = ">=1.0" },
+    { name = "python-multipart", specifier = ">=0.0.9" },
     { name = "sentence-transformers", specifier = ">=2.6,<3.0" },
     { name = "torch", specifier = ">=2.2,<2.3" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.27" },
@@ -1078,6 +1083,38 @@ requires-dist = [
 dev = [
     { name = "pytest", specifier = ">=8.0" },
     { name = "ruff", specifier = ">=0.4" },
+]
+
+[[package]]
+name = "lyricsgenius"
+version = "3.7.3"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.11'",
+]
+dependencies = [
+    { name = "beautifulsoup4", marker = "python_full_version < '3.11'" },
+    { name = "requests", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a0/cf/87ec19a70b76712d99e4b821d5fe924a437f9d04666955062f430e84d8c1/lyricsgenius-3.7.3.tar.gz", hash = "sha256:f4603cb20e99e2b791055a3a9441d2900c89e1bc23a1aff5cc8df949c3c6a630", size = 518687, upload-time = "2025-10-26T05:51:41.426Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/81/a2673b0410c4fb9acdd027e229660cc96355c529937c746c7bcd5250e7a5/lyricsgenius-3.7.3-py3-none-any.whl", hash = "sha256:81a71555d45c64ab6b99de529ccfca0ff4dbe69305fe3e9c961a4faed2095f48", size = 48686, upload-time = "2025-10-26T05:51:39.741Z" },
+]
+
+[[package]]
+name = "lyricsgenius"
+version = "3.12.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.11'",
+]
+dependencies = [
+    { name = "beautifulsoup4", marker = "python_full_version >= '3.11'" },
+    { name = "requests", marker = "python_full_version >= '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7a/f7/f3dd5e11095a650bb6b3305e022c27ad9745a7f7fa076a35f3064781de03/lyricsgenius-3.12.1.tar.gz", hash = "sha256:b9f9ac088cbe54df586059b3cdca094fab8f378ccd8a577ade29041d2185891d", size = 518487, upload-time = "2026-05-04T05:36:49.331Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7f/d4/39a7da56f36ac585a18e46edec322732d7786fc27581164ce8398445fc22/lyricsgenius-3.12.1-py3-none-any.whl", hash = "sha256:ac323f222ae197d98a0c47aa4c01c165111c2ef78acaf166f65102a57e770eca", size = 50651, upload-time = "2026-05-04T05:36:47.733Z" },
 ]
 
 [[package]]

@@ -64,6 +64,81 @@ body::before{
 .status-link{color:var(--white);text-decoration:none}
 .status-link:hover{color:var(--pink)}
 
+/* Connect Data button in masthead */
+.connect-btn{
+  background:var(--pink);color:var(--bg);
+  padding:4px 12px;cursor:pointer;font-weight:700;
+  transition:background .12s;
+}
+.connect-btn:hover{background:var(--cyan)}
+
+/* Connect Data panel */
+.connect-panel{
+  display:none;border:2px solid var(--border);background:var(--surface);
+  padding:32px;margin:24px 0;
+}
+.connect-panel.show{display:block;animation:fadeUp .25s ease-out}
+.connect-panel-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--border);
+}
+.connect-panel h3{font-family:'Archivo Black',sans-serif;font-size:28px;text-transform:uppercase;letter-spacing:-.02em}
+.connect-close{
+  font-family:'Space Mono',monospace;font-size:12px;
+  background:none;border:2px solid var(--border);color:var(--white);
+  padding:6px 14px;cursor:pointer;letter-spacing:.1em;
+}
+.connect-close:hover{background:var(--pink);border-color:var(--pink);color:var(--bg)}
+.connect-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:768px){.connect-grid{grid-template-columns:1fr}}
+.connect-option{border:2px solid var(--border);padding:24px;background:var(--bg)}
+.connect-option h4{font-family:'Archivo Black',sans-serif;font-size:20px;text-transform:uppercase;margin-bottom:10px}
+.connect-option h4 .badge{font-family:'Space Mono',monospace;font-size:10px;background:var(--cyan);color:var(--bg);padding:2px 8px;margin-left:8px;letter-spacing:.1em}
+.connect-option h4 .badge.warn{background:var(--pink)}
+.connect-option p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:16px;min-height:60px}
+.connect-option input[type="file"]{
+  width:100%;background:var(--surface-2);border:1px solid var(--border-dim);
+  color:var(--white);padding:10px;font-family:'Space Mono',monospace;font-size:11px;margin-bottom:12px;
+}
+.connect-option button{
+  width:100%;background:var(--pink);color:var(--bg);border:none;
+  font-family:'Archivo Black',sans-serif;font-size:14px;text-transform:uppercase;
+  letter-spacing:.05em;padding:12px;cursor:pointer;
+}
+.connect-option button:hover{background:var(--cyan)}
+.connect-option button.cyan{background:var(--cyan)}
+.connect-option button.cyan:hover{background:var(--pink)}
+.connect-option button:disabled{background:var(--muted);cursor:not-allowed}
+.connect-status{margin-top:20px;padding:14px 18px;background:var(--bg);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:12px;line-height:1.6;min-height:50px;display:none}
+.connect-status.show{display:block}
+.connect-status.success{border-color:var(--cyan);color:var(--cyan)}
+.connect-status.error{border-color:var(--pink);color:var(--pink)}
+
+/* Real data banner */
+.real-data-banner{
+  background:var(--cyan);color:var(--bg);padding:12px 24px;
+  font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;font-weight:700;
+  display:none;justify-content:space-between;align-items:center;border-bottom:2px solid var(--border);
+}
+.real-data-banner.show{display:flex}
+
+/* Lyric expand UI */
+.lib-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.lib-btn{
+  font-family:'Space Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.12em;
+  background:var(--bg);color:var(--white);border:2px solid var(--border);padding:6px 12px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+}
+.lib-btn:hover{background:var(--pink);border-color:var(--pink);color:var(--bg)}
+.lib-btn.genius-btn{border-color:var(--cyan);color:var(--cyan)}
+.lib-btn.genius-btn:hover{background:var(--cyan);color:var(--bg)}
+.lib-full{
+  display:none;margin-top:14px;padding:14px;background:var(--surface-2);
+  border-left:3px solid var(--cyan);font-size:14px;line-height:1.6;
+  font-style:italic;color:var(--white);
+}
+.lib-full.show{display:block;animation:fadeUp .2s ease-out}
+
 /* ─────────── HERO / COVER ─────────── */
 .hero{
   padding:80px 0 100px;
@@ -443,18 +518,51 @@ body::before{
   <div class="statusbar-row">
     <div class="status-left">
       <span><span class="live-dot"></span>LIVE</span>
-      <span>LISTENING.ARCHIVE / V.1.0</span>
+      <span>LISTENING.ARCHIVE / V.1.1</span>
       <span class="status-right" style="display:none"></span>
     </div>
     <div class="status-right">
-      <span>SUBJECT_00471A</span>
-      <span>21.05.2026</span>
-      <span>GEMINI-2.5-FLASH</span>
+      <span data-status="subject">SUBJECT_00471A</span>
+      <span data-status="date">21.05.2026</span>
+      <span data-status="model">GEMINI-2.5-FLASH</span>
+      <span class="connect-btn" onclick="togglePanel()">+ CONNECT DATA</span>
     </div>
   </div>
 </div>
 
 <div class="container">
+
+<!-- ─────────── REAL DATA BANNER (shown when user has connected) ─────────── -->
+<div class="real-data-banner" id="real-data-banner">
+  <span>● showing your data · <span id="banner-stats">— plays indexed</span></span>
+  <span style="cursor:pointer" onclick="togglePanel()">+ manage</span>
+</div>
+
+<!-- ─────────── CONNECT DATA PANEL (hidden by default) ─────────── -->
+<section class="connect-panel" id="connect-panel">
+  <div class="connect-panel-head">
+    <h3>connect your data</h3>
+    <button class="connect-close" onclick="togglePanel()">close ✕</button>
+  </div>
+  <div class="connect-grid">
+    <div class="connect-option">
+      <h4>upload spotify export <span class="badge">free</span></h4>
+      <p>Request your data at <a href="https://www.spotify.com/account/privacy/" target="_blank" style="color:var(--cyan)">spotify.com/account/privacy</a>. They email a ZIP in 5–30 days. Drop it here.</p>
+      <input type="file" id="zip-upload" accept=".zip">
+      <button onclick="uploadZip()" id="zip-upload-btn">upload &amp; ingest</button>
+    </div>
+    <div class="connect-option">
+      <h4>connect spotify <span class="badge warn">premium req'd</span></h4>
+      <p>OAuth flow. Real-time data. Requires Spotify Premium for Web API access (Spotify's Feb 2026 policy change).</p>
+      <button onclick="connectSpotify()" class="cyan">connect spotify →</button>
+    </div>
+  </div>
+  <div class="connect-status" id="connect-status"></div>
+  <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border-dim)">
+    <button onclick="ingestLyrics()" id="lyrics-ingest-btn" style="background:var(--bg);color:var(--white);border:2px solid var(--cyan);padding:10px 18px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer">+ ingest lyrics from genius (top 30 tracks)</button>
+    <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-left:14px">requires data + GENIUS_TOKEN in .env. takes 2–3 min.</span>
+  </div>
+</section>
 
 <!-- ─────────── HERO ─────────── -->
 <section class="hero">
@@ -473,19 +581,19 @@ body::before{
   <div class="hero-meta">
     <div>
       <div class="k">total plays</div>
-      <div class="v pink">14,802</div>
+      <div class="v pink" data-stat="plays">14,802</div>
     </div>
     <div>
       <div class="k">minutes</div>
-      <div class="v">38,420</div>
+      <div class="v" data-stat="minutes">38,420</div>
     </div>
     <div>
       <div class="k">distinct artists</div>
-      <div class="v cyan">847</div>
+      <div class="v cyan" data-stat="artists">847</div>
     </div>
     <div>
       <div class="k">vectors indexed</div>
-      <div class="v">17,194</div>
+      <div class="v" data-stat="vectors">17,194</div>
     </div>
   </div>
 </section>
@@ -501,9 +609,9 @@ body::before{
   </div>
   <div class="subject">
     <div>
-      <div class="subject-name">mitski<span class="stroke">.</span></div>
+      <div class="subject-name" data-subject="name">mitski<span class="stroke">.</span></div>
       <div class="subject-body">
-        <p>In the long view, the year's record collapses into a single voice — patient, ambivalent, deeply listened-to. <strong>412 plays</strong> across the catalogue, more than the next three artists combined.</p>
+        <p>In the long view, the year's record collapses into a single voice — patient, ambivalent, deeply listened-to. <strong data-subject="plays-inline">412 plays</strong> across the catalogue, more than the next three artists combined.</p>
         <div class="subject-pull">"bug like an angel" — 47 plays. usually before 10am.</div>
         <p>Pattern holds across moods: <strong>early mornings before exams</strong>, late nights after long calls, Sunday afternoons in autumn. Not a phase. A residence.</p>
       </div>
@@ -511,11 +619,11 @@ body::before{
     <aside class="subject-side">
       <div class="field">
         <div class="field-k">total plays</div>
-        <div class="field-v pink">412</div>
+        <div class="field-v pink" data-subject="plays">412</div>
       </div>
       <div class="field">
         <div class="field-k">distinct tracks</div>
-        <div class="field-v">38 / 84</div>
+        <div class="field-v" data-subject="tracks">38 / 84</div>
       </div>
       <div class="field">
         <div class="field-k">first indexed</div>
@@ -542,7 +650,7 @@ body::before{
     </div>
     <div class="section-aside">ranked by play count<br>// hover for invert</div>
   </div>
-  <div class="tracklist">
+  <div class="tracklist" data-section="tracklist">
     <div class="track"><div class="track-cat">01</div><div class="track-title">bug like an angel</div><div class="track-artist">Mitski</div><div class="track-plays">47×</div></div>
     <div class="track"><div class="track-cat">02</div><div class="track-title">pink in the night</div><div class="track-artist">Mitski</div><div class="track-plays">39×</div></div>
     <div class="track"><div class="track-cat">03</div><div class="track-title">funeral</div><div class="track-artist">Phoebe Bridgers</div><div class="track-plays">38×</div></div>
@@ -565,10 +673,10 @@ body::before{
     </div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-num">38<span class="small">k</span></div><div class="stat-k">minutes listened<br>≈ 26.7 days awake</div></div>
-    <div class="stat"><div class="stat-num pink">847</div><div class="stat-k">distinct artists<br>indexed</div></div>
-    <div class="stat"><div class="stat-num cyan">247</div><div class="stat-k">new discoveries<br>not in last year</div></div>
-    <div class="stat"><div class="stat-num">14<span class="small">.8k</span></div><div class="stat-k">total plays<br>logged</div></div>
+    <div class="stat"><div class="stat-num" data-stat-big="minutes">38<span class="small">k</span></div><div class="stat-k">minutes listened<br>≈ 26.7 days awake</div></div>
+    <div class="stat"><div class="stat-num pink" data-stat-big="artists">847</div><div class="stat-k">distinct artists<br>indexed</div></div>
+    <div class="stat"><div class="stat-num cyan" data-stat-big="discoveries">247</div><div class="stat-k">new discoveries<br>not in last year</div></div>
+    <div class="stat"><div class="stat-num" data-stat-big="plays">14<span class="small">.8k</span></div><div class="stat-k">total plays<br>logged</div></div>
   </div>
 </section>
 
@@ -606,7 +714,7 @@ body::before{
       <div class="section-num">§ 05 / the profile</div>
       <h2>a <span class="cyan">field note</span><br>on this listener.</h2>
     </div>
-    <div class="section-aside">written by gemini-2.5-flash<br>across 5 retrieval layers</div>
+    <div class="section-aside">written by gemma-3-27b<br>across 5 retrieval layers</div>
   </div>
   <div class="profile">
     <div class="profile-head">
@@ -682,7 +790,7 @@ body::before{
       <div class="section-num">§ 08 / chat</div>
       <h2>ask your <span class="pink">archivist</span><br>anything.</h2>
     </div>
-    <div class="section-aside">gemini-2.5-flash<br>+ 5 rag layers<br>+ 5 mcp tools</div>
+    <div class="section-aside">gemma-3-27b<br>+ 5 rag layers<br>+ 5 mcp tools</div>
   </div>
 
   <div class="chat-grid">
@@ -712,7 +820,7 @@ body::before{
       </div>
       <div class="chat-feed" id="chat-feed">
         <div class="msg msg-bot">
-          <div class="msg-label">archivist · gemini-2.5-flash</div>
+          <div class="msg-label">archivist · gemma-3-27b</div>
           <div class="msg-body">welcome to the catalogue. I can search your <em>listening memory</em>, <em>lyrics index</em>, <em>artist bios</em>, and <em>personal notes</em>. try: <em>"what was I listening to during exams?"</em></div>
         </div>
       </div>
@@ -879,17 +987,39 @@ function renderResults(results) {
     el.innerHTML = '<div class="lib-result"><div class="lib-meta"><span>// 0 matches in your catalogue</span></div><div class="lib-snippet">try another query — the embedder finds meaning, not exact words.</div></div>';
     return;
   }
-  el.innerHTML = results.map(r => `
+  el.innerHTML = results.map(r => {
+    const fullText = r.full_text || r.snippet;
+    const hasExpand = fullText && fullText.length > (r.snippet || '').length;
+    const geniusUrl = r.genius_url;
+    return `
     <div class="lib-result">
       <div class="lib-meta">
-        <span>${r.cat} · indexed via genius</span>
+        <span>${r.cat || 'L-' + Math.floor(Math.random()*999)} · indexed via genius</span>
         <span class="lib-score">cosine ${r.score.toFixed(3)}</span>
       </div>
       <div class="lib-title">${r.title}</div>
       <div class="lib-artist">// ${r.artist}</div>
       <div class="lib-snippet">${r.snippet}</div>
+      <div class="lib-actions">
+        ${hasExpand ? `<button class="lib-btn" onclick="toggleExpand(this)">show more ↓</button>` : ''}
+        ${geniusUrl ? `<a class="lib-btn genius-btn" href="${geniusUrl}" target="_blank" rel="noopener">read on genius →</a>` : ''}
+      </div>
+      ${hasExpand ? `<div class="lib-full">${escapeHtml(fullText)}</div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toggleExpand(btn) {
+  const card = btn.closest('.lib-result');
+  const full = card.querySelector('.lib-full');
+  if (!full) return;
+  const isOpen = full.classList.toggle('show');
+  btn.textContent = isOpen ? 'show less ↑' : 'show more ↓';
 }
 
 function setQuery(q) {
@@ -943,7 +1073,7 @@ async function sendChat() {
   const thinkingId = 'think-' + Date.now();
   feed.innerHTML += `
     <div id="${thinkingId}" class="msg msg-bot">
-      <div class="msg-label">archivist · gemini-2.5-flash</div>
+      <div class="msg-label">archivist · gemma-3-27b</div>
       <div class="msg-body" style="color:var(--muted)">▓ ▓ ▓ retrieving across rag layers...</div>
     </div>`;
   feed.scrollTop = feed.scrollHeight;
@@ -957,7 +1087,7 @@ async function sendChat() {
     const toolNames = tools.map(t => t.name).join(' → ') || 'none (model answered directly)';
     feed.innerHTML += `
       <div class="msg msg-bot">
-        <div class="msg-label">archivist · gemini-2.5-flash</div>
+        <div class="msg-label">archivist · gemma-3-27b</div>
         <div class="msg-body">${formatReply(data.reply)}</div>
         <div class="msg-tools"><strong>tools called</strong> ${toolNames}</div>
       </div>`;
@@ -978,6 +1108,169 @@ async function sendChat() {
 
 // Init with a default search to show the section populated
 searchLibrary();
+
+// ─────────── v1.1 — STATUS CHECK + DYNAMIC RENDERING ───────────
+
+async function init() {
+  try {
+    const status = await fetch('/api/status').then(r => r.json());
+    console.log('Archive status:', status);
+
+    if (status && status.has_data) {
+      // User has connected data — fetch and overlay it onto the magazine
+      const wrapped = await fetch('/api/wrapped').then(r => r.json());
+      if (wrapped.has_real_data) {
+        renderRealData(wrapped);
+        showRealDataBanner(wrapped.stats);
+      }
+    }
+    // If we just came back from Spotify OAuth, surface a brief message + reload state
+    if (window.location.search.includes('auth=ok')) {
+      showStatus('✓ Spotify connected. Pulling your data…', 'success');
+      setTimeout(() => location.replace('/'), 2000);
+    }
+  } catch (e) {
+    console.warn('Status check failed (running standalone?):', e.message);
+  }
+}
+
+function renderRealData(data) {
+  const stats = data.stats || {};
+  // Hero meta strip
+  setText('[data-stat="plays"]', (stats.total_plays || 0).toLocaleString());
+  setText('[data-stat="minutes"]', (stats.total_minutes || 0).toLocaleString());
+  setText('[data-stat="artists"]', (stats.distinct_artists || 0).toLocaleString());
+  setText('[data-stat="vectors"]', (stats.vectors || 0).toLocaleString());
+
+  // Big stats section
+  setText('[data-stat-big="minutes"]', shortNum(stats.total_minutes || 0));
+  setText('[data-stat-big="artists"]', (stats.distinct_artists || 0).toLocaleString());
+  setText('[data-stat-big="plays"]', shortNum(stats.total_plays || 0));
+  setText('[data-stat-big="discoveries"]', (stats.distinct_tracks || 0).toLocaleString());
+
+  // Subject — top artist
+  if (data.top_artists && data.top_artists.length) {
+    const top = data.top_artists[0];
+    setText('[data-subject="name"]', top.name.toLowerCase() + '.');
+    setText('[data-subject="plays"]', top.plays);
+    setText('[data-subject="plays-inline"]', `${top.plays} plays`);
+    setText('[data-subject="tracks"]', `— top of ${stats.distinct_artists} artists`);
+  }
+
+  // Tracklist — top 10
+  if (data.top_tracks && data.top_tracks.length) {
+    const tl = document.querySelector('[data-section="tracklist"]');
+    if (tl) {
+      tl.innerHTML = data.top_tracks.map((t, i) => `
+        <div class="track">
+          <div class="track-cat">${String(i + 1).padStart(2, '0')}</div>
+          <div class="track-title">${escapeHtml(t.name.toLowerCase())}</div>
+          <div class="track-artist">${escapeHtml(t.artist)}</div>
+          <div class="track-plays">${t.plays}×</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Update subject ID in masthead
+  setText('[data-status="subject"]', 'YOUR_DATA');
+}
+
+function setText(selector, value) {
+  const el = document.querySelector(selector);
+  if (el) el.textContent = value;
+}
+
+function shortNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'k';
+  return String(n);
+}
+
+function showRealDataBanner(stats) {
+  const banner = document.getElementById('real-data-banner');
+  const statsEl = document.getElementById('banner-stats');
+  if (banner && statsEl && stats) {
+    statsEl.textContent = `${(stats.total_plays || 0).toLocaleString()} plays · ${(stats.distinct_artists || 0).toLocaleString()} artists · ${(stats.lyrics_indexed || 0).toLocaleString()} lyrics indexed`;
+    banner.classList.add('show');
+  }
+}
+
+// ─────────── CONNECT PANEL ───────────
+
+function togglePanel() {
+  document.getElementById('connect-panel').classList.toggle('show');
+  if (document.getElementById('connect-panel').classList.contains('show')) {
+    document.getElementById('connect-panel').scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+}
+
+function showStatus(msg, kind) {
+  const el = document.getElementById('connect-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'connect-status show ' + (kind || '');
+}
+
+async function uploadZip() {
+  const fileInput = document.getElementById('zip-upload');
+  const btn = document.getElementById('zip-upload-btn');
+  const file = fileInput.files[0];
+  if (!file) {
+    showStatus('Pick a .zip file first.', 'error');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'uploading...';
+  showStatus('▓ ▓ ▓ uploading and ingesting (this can take a minute for large exports)…', '');
+
+  const form = new FormData();
+  form.append('file', file);
+
+  try {
+    const res = await fetch('/api/ingest/upload', {method: 'POST', body: form});
+    const data = await res.json();
+    if (data.error) {
+      showStatus('✗ ' + data.error, 'error');
+      btn.disabled = false;
+      btn.textContent = 'upload & ingest';
+      return;
+    }
+    showStatus(`✓ ingested ${data.inserted} plays · reloading…`, 'success');
+    setTimeout(() => location.reload(), 1500);
+  } catch (e) {
+    showStatus('✗ upload failed: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'upload & ingest';
+  }
+}
+
+function connectSpotify() {
+  window.location.href = '/api/auth/login';
+}
+
+async function ingestLyrics() {
+  const btn = document.getElementById('lyrics-ingest-btn');
+  btn.disabled = true;
+  btn.textContent = 'ingesting lyrics... (be patient, 2–3 min)';
+  showStatus('▓ ▓ ▓ querying genius for your top 30 tracks…', '');
+  try {
+    const res = await fetch('/api/lyrics/ingest?limit=30', {method: 'POST'});
+    const data = await res.json();
+    if (data.error) {
+      showStatus('✗ ' + data.error, 'error');
+    } else {
+      showStatus(`✓ ingested ${data.ingested}/${data.attempted} tracks · ${data.total_lyrics_indexed} lyrics chunks total`, 'success');
+    }
+  } catch (e) {
+    showStatus('✗ ingestion failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '+ ingest lyrics from genius (top 30 tracks)';
+  }
+}
+
+// Boot
+init();
 </script>
 
 </body>

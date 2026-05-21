@@ -53,24 +53,33 @@ class LyricsRAG:
         if not settings.GENIUS_TOKEN:
             print("(no GENIUS_TOKEN set, skipping)")
             return False
-        async with httpx.AsyncClient() as c:
-            search = await c.get(
-                f"{GENIUS_BASE}/search",
-                params={"q": f"{title} {artist}"},
-                headers={"Authorization": f"Bearer {settings.GENIUS_TOKEN}"},
+        try:
+            import asyncio
+            import lyricsgenius
+            genius = lyricsgenius.Genius(
+                settings.GENIUS_TOKEN,
+                verbose=False,
+                remove_section_headers=True,
+                timeout=15,
+                retries=2,
             )
-            hits = search.json().get("response", {}).get("hits", [])
-            if not hits:
+            # lyricsgenius is sync — run in a thread so we don't block the event loop
+            song = await asyncio.to_thread(genius.search_song, title, artist)
+            if not song or not getattr(song, "lyrics", None):
                 return False
-            song_path = hits[0]["result"]["path"]
-            page = await c.get(f"https://genius.com{song_path}")
-        # Genius doesn't return raw lyrics via API — we parse the page.
-        # For production, use a parser like lyricsgenius. Stub here:
-        lyrics = _extract_lyrics_from_html(page.text)
-        if not lyrics:
+            self.index_document(
+                track_id,
+                song.lyrics,
+                {
+                    "title": title,
+                    "artist": artist,
+                    "genius_url": song.url,
+                },
+            )
+            return True
+        except Exception as e:
+            print(f"  ✗ Lyrics ingest failed for '{title}' by {artist}: {e}")
             return False
-        self.index_document(track_id, lyrics, {"title": title, "artist": artist})
-        return True
 
     # --- Search ---
 
@@ -86,8 +95,10 @@ class LyricsRAG:
                 "title": meta.get("title", "—"),
                 "artist": meta.get("artist", "—"),
                 "snippet": doc[:280],
-                "score": round(1.0 - dist, 3),  # cosine distance → similarity
+                "full_text": doc,  # the entire indexed chunk for the expand view
+                "score": round(1.0 - dist, 3),
                 "parent_id": meta.get("parent_id"),
+                "genius_url": meta.get("genius_url"),
             })
         return results
 
@@ -103,8 +114,5 @@ def _chunk(text: str, max_words: int = 80) -> list[str]:
 
 
 def _extract_lyrics_from_html(html: str) -> str:
-    """
-    Stub. Real implementation: use BeautifulSoup to extract div[data-lyrics-container].
-    For demo mode we rely on pre-baked lyrics in demo_data.json.
-    """
+    """Deprecated — lyricsgenius handles parsing now. Kept for backward compat."""
     return ""

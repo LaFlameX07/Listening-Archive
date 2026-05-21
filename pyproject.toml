@@ -23,6 +23,9 @@ dependencies = [
     "google-generativeai>=0.7",
     "mcp>=0.9",
     "beautifulsoup4>=4.12",
+    # --- v1.1: lyrics ingestion + file upload ---
+    "lyricsgenius>=3.0",
+    "python-multipart>=0.0.9",
 ]
 
 [dependency-groups]
